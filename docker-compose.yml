@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: securitymaster      
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+
+networks:
+  app_network:
+    name: securitymaster
+    driver: bridge
+
+volumes:
+  db_data:  

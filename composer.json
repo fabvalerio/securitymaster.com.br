@@ -1,0 +1,16 @@
+{
+    "name": "fabva/securitymaster",
+    "description": "Security master",
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Fábio Valério",
+            "email": "valerio.fabio@gmail.com"
+        }
+    ],
+    "require": {}
+}
