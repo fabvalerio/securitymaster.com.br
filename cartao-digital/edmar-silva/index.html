@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Master - Cartão Virtual</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #000000 0%, #4f4e50 100%);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100svh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animações de fundo */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+
+        .business-card {
+            max-width: 400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            animation: cardAppear 1s ease-out;
+        }
+
+
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #000000 0%, #000000 50%, #2c3e50 100%);
+            color: white;
+            padding: 30px 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s ease-in-out infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+
+        .logo {
+            max-width: 250px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+
+        .card-header h4 {
+            font-weight: 300;
+            font-size: 1.1rem;
+            margin: 0;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-body {
+            padding: 35px 30px;
+            background: white;
+            position: relative;
+        }
+
+        .company-title {
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .company-title h3 {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #2c3e50, #393a3a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .company-title h5 {
+            font-weight: 500;
+            color: #7f8c8d;
+            /* font-size: 1rem; */
+            margin: 0;
+        }
+
+        .contact-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .contact-section:hover,
+        .contact-section:focus,
+        .contact-section:active {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .contact-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: center;
+        }
+
+        /* .contact-title::before {
+            content: '';
+            width: 3px;
+            height: 20px;
+            background: linear-gradient(135deg, #eeff03, #f1d900);
+            border-radius: 2px;
+        } */
+
+        .contact-info {
+            margin-bottom: 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            /* margin-bottom: 12px; */
+            padding: 8px 0;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding-left: 10px;
+        }
+
+        .contact-item:hover {
+            background: rgba(52, 152, 219, 0.1);
+            transform: translateX(5px);
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-item i {
+            width: 20px;
+            margin-right: 15px;
+            color: #ffe600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover i {
+            transform: scale(1.2);
+            color: #2c3e50;
+        }
+
+        .contact-item p {
+            margin: 0;
+            color: #34495e;
+            font-weight: 500;
+            font-size: .65rem;
+        }
+
+        .contact-item p  a{
+            margin: 0;
+            color: #34495e;
+            text-decoration: none;
+        }
+
+        .name-highlight {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            font-size: 0.55rem;
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+
+        /* Botões de ação */
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-call {
+            background: linear-gradient(135deg, #ffe600, #cca72e);
+            color: white;
+            width: 33%;
+            font-size: 12px;
+        }
+
+        .btn-email {
+            background: linear-gradient(135deg, #fa00bb, #a8068d);
+            color: white;
+            width: 33%;
+            font-size: 12px;
+        }
+
+        .btn-website {
+            background: linear-gradient(135deg, #240668, #0936ff);
+            color: white;
+            width: 33%;
+            font-size: 12px;
+        }
+
+    .btn-save {
+        background: linear-gradient(135deg, #0f0f0f, #acacaf);
+        color: white;
+        width: 45%;
+    }
+    .btn-qr {
+        background: linear-gradient(135deg, #0f0f0f, #acacaf);
+        color: white;
+        width: 45%;
+    }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .business-card {
+                margin: 10px;
+                border-radius: 20px;
+            }
+            
+            .card-header {
+                padding: 25px 20px;
+            }
+            
+            .card-body {
+                padding: 25px 20px;
+            }
+            
+            .company-title h3 {
+                font-size: 0.5rem!important;
+            }
+        }
+
+        /* Efeitos de partículas */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            animation: particleFloat 6s infinite linear;
+        }
+
+                 @keyframes particleFloat {
+             0% {
+                 transform: translateY(100vh) rotate(0deg);
+                 opacity: 0;
+             }
+             10% {
+                 opacity: 1;
+             }
+             90% {
+                 opacity: 1;
+             }
+             100% {
+                 transform: translateY(-100px) rotate(360deg);
+                 opacity: 0;
+             }
+         }
+
+         /* Modal QR Code */
+         .qr-modal {
+             display: none;
+             position: fixed;
+             z-index: 2000;
+             left: 0;
+             top: 0;
+             width: 100%;
+             height: 100%;
+             background-color: rgba(0, 0, 0, 0.8);
+             backdrop-filter: blur(5px);
+             animation: fadeIn 0.3s ease;
+         }
+
+         @keyframes fadeIn {
+             from { opacity: 0; }
+             to { opacity: 1; }
+         }
+
+         .qr-modal-content {
+             background: white;
+             margin: 5% auto;
+             padding: 30px;
+             border-radius: 20px;
+             width: 90%;
+             max-width: 350px;
+             text-align: center;
+             position: relative;
+             animation: slideIn 0.3s ease;
+             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+         }
+
+         @keyframes slideIn {
+             from { 
+                 transform: translateY(-50px);
+                 opacity: 0;
+             }
+             to { 
+                 transform: translateY(0);
+                 opacity: 1;
+             }
+         }
+
+         .qr-close {
+             position: absolute;
+             top: 15px;
+             right: 20px;
+             font-size: 24px;
+             font-weight: bold;
+             color: #666;
+             cursor: pointer;
+             transition: color 0.3s ease;
+         }
+
+         .qr-close:hover {
+             color: #000;
+         }
+
+         .qr-title {
+             font-size: 1.2rem;
+             font-weight: 600;
+             color: #2c3e50;
+             margin-bottom: 20px;
+             font-family: 'Poppins', sans-serif;
+         }
+
+         .qr-code-container {
+             background: white;
+             padding: 20px;
+             border-radius: 15px;
+             margin: 20px 0;
+             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+         }
+
+         #qrcode {
+             display: inline-block;
+         }
+
+         .qr-info {
+             font-size: 0.9rem;
+             color: #666;
+             margin-top: 15px;
+             line-height: 1.4;
+         }
+
+         .loading-spinner {
+             text-align: center;
+             padding: 40px 20px;
+             color: #666;
+         }
+
+         .loading-spinner i {
+             font-size: 2rem;
+             color: #ffe600;
+             margin-bottom: 10px;
+         }
+
+         .loading-spinner p {
+             margin: 0;
+             font-size: 0.9rem;
+         }
+
+         .error-message {
+             text-align: center;
+             padding: 40px 20px;
+             color: #dc3545;
+         }
+
+         .error-message i {
+             font-size: 2rem;
+             color: #dc3545;
+             margin-bottom: 10px;
+         }
+
+         .error-message p {
+             margin: 5px 0;
+             font-size: 0.9rem;
+         }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fundo -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Modal QR Code -->
+    <div id="qrModal" class="qr-modal">
+        <div class="qr-modal-content">
+            <span class="qr-close" onclick="closeQRModal()">&times;</span>
+            <div class="qr-title">
+                <i class="fas fa-qrcode"></i>
+                QR Code do Contato
+            </div>
+                         <div class="qr-code-container">
+                 <div id="qrcode">
+                     <div class="loading-spinner">
+                         <i class="fas fa-spinner fa-spin"></i>
+                         <p>Gerando QR Code...</p>
+                     </div>
+                 </div>
+             </div>
+            <div class="qr-info">
+                <p><strong>Edmar Silva</strong></p>
+                <p>Security Master - Base de Campos do Jordão</p>
+                <p>Escaneie o QR Code para salvar o contato</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="business-card">
+            <div class="card-header">
+                <img src="../logo.png" alt="Security Master Logo" class="logo img-fluid">
+                <h4>A sua segurança é o nosso trabalho.</h4>
+            </div>
+            
+            <div class="card-body">
+                <div class="company-title">
+                    <h3>BASE DE CAMPOS DO JORDÃO</h3>
+                </div>
+                
+                <div class="contact-section">
+                    <div class="contact-title">
+                        <i class="fas fa-user-tie"></i>
+                        Representante Comercial
+                    </div>
+                    
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-user"></i>
+                            <p><span class="name-highlight">Edmar Silva</span></p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <p><a href="tel:12997879508">12 99787-9508</a></p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <p><a href="mailto:comercial@securitymaster.com.br" target="_blank">comercial@securitymaster.com.br</a></p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-globe"></i>
+                            <p><a href="https://www.securitymaster.com.br" target="_blank">www.securitymaster.com.br</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons d-flex justify-content-center">
+                    <a href="tel:12997879508" class="action-btn btn-call">
+                        <i class="fas fa-phone"></i>
+                        Ligar
+                    </a>
+                    <a href="https://www.instagram.com/gruposecmaster/" class="action-btn btn-email">
+                        <i class="fas fa-envelope"></i>
+                        Instagram
+                    </a>
+                    <a href="https://www.linkedin.com/company/gruposecmaster/" target="_blank" class="action-btn btn-website">
+                        <i class="fas fa-globe"></i>
+                        LinkedIn
+                    </a>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="#" class="action-btn btn-save" onclick="saveContact()">
+                        <i class="fas fa-save"></i>
+                        Salvar
+                    </a>
+                    <a href="#" class="action-btn btn-qr" onclick="showQRCode()">
+                        <i class="fas fa-qrcode"></i>
+                        QrCode
+                    </a>
+                </div>
+                
+                <!-- Botão adicional para Android -->
+                <!-- <div class="action-buttons" id="android-contact-btn" style="display: none;">
+                    <a href="#" class="action-btn btn-save" onclick="openAndroidContacts()" style="background: linear-gradient(135deg, #4CAF50, #45a049);">
+                        <i class="fas fa-address-book"></i>
+                        Abrir Contatos (Android)
+                    </a>
+                </div> -->
+                
+                <div class="footer">
+                    <p>© 2025 Security Master - Todos os direitos reservados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Criar partículas de fundo
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Efeito de parallax no cartão
+        function handleMouseMove(e) {
+            const card = document.querySelector('.business-card');
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (y - centerY) / 10;
+            const rotateY = (centerX - x) / 10;
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+        }
+
+        function handleMouseLeave() {
+            const card = document.querySelector('.business-card');
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        }
+
+                 // Inicializar
+         document.addEventListener('DOMContentLoaded', function() {
+             createParticles();
+             
+             const card = document.querySelector('.business-card');
+             //card.addEventListener('mousemove', handleMouseMove);
+             card.addEventListener('mouseleave', handleMouseLeave);
+             
+             // Verificar se é Android e mostrar botão adicional
+             const isAndroid = /Android/i.test(navigator.userAgent);
+             if (isAndroid) {
+                 const androidBtn = document.getElementById('android-contact-btn');
+                 if (androidBtn) {
+                     androidBtn.style.display = 'block';
+                 }
+             }
+
+             // Adicionar listener para fechar modal com ESC
+             document.addEventListener('keydown', function(e) {
+                 if (e.key === 'Escape') {
+                     closeQRModal();
+                 }
+             });
+         });
+
+        // Efeito de digitação para o título
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Aplicar efeito de digitação após carregamento
+        setTimeout(() => {
+            const title = document.querySelector('.company-title h3');
+            const originalText = title.textContent;
+            typeWriter(title, originalText, 150);
+        }, 1000);
+
+        // Função para salvar contato na agenda
+        function saveContact() {
+            // Dados do contato
+            const contactData = {
+                name: 'Edmar Silva',
+                company: 'SECURITY MASTER',
+                title: 'Representante Comercial',
+                phone: '12997879508',
+                email: 'comercial@securitymaster.com.br',
+                website: 'www.securitymaster.com.br',
+                address: 'Base de Campos do Jordão'
+            };
+
+            // Detectar se é dispositivo móvel
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                // Para dispositivos móveis, tentar abrir o aplicativo de contatos
+                try {
+                    // Criar URL para abrir contatos no Android
+                    const androidContactsUrl = `content://com.android.contacts/contacts`;
+                    
+                    // Para iOS, usar o protocolo tel: com dados
+                    const iosContactsUrl = `tel:${contactData.phone}`;
+                    
+                    // Tentar abrir o aplicativo de contatos
+                    if (navigator.share) {
+                        // Usar Web Share API se disponível
+                        navigator.share({
+                            title: contactData.name,
+                            text: `${contactData.name} - ${contactData.company}\n${contactData.phone}\n${contactData.email}`,
+                            url: window.location.href
+                        }).then(() => {
+                            showNotification('Compartilhamento realizado!', 'success');
+                        }).catch(() => {
+                            downloadVCF(contactData);
+                        });
+                    } else {
+                        downloadVCF(contactData);
+                    }
+                } catch (error) {
+                    downloadVCF(contactData);
+                }
+            } else {
+                // Para desktop, baixar arquivo VCF
+                downloadVCF(contactData);
+            }
+        }
+
+        // Função para baixar arquivo VCF
+        function downloadVCF(contactData) {
+            // Criar conteúdo do arquivo VCF
+            const vcfContent = `BEGIN:VCARD
+VERSION:3.0
+FN:${contactData.name}
+ORG:${contactData.company}
+TITLE:${contactData.title}
+TEL;TYPE=CELL:${contactData.phone}
+EMAIL:${contactData.email}
+URL:${contactData.website}
+ADR;TYPE=WORK:;;${contactData.address};;;;
+NOTE:Representante Comercial da Security Master - Base de Campos do Jordão
+END:VCARD`;
+
+            // Criar blob e link para download
+            const blob = new Blob([vcfContent], { type: 'text/vcard' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Edmar_Silva_Security_Master.vcf';
+            
+            // Adicionar link ao DOM, clicar e remover
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Limpar URL
+            window.URL.revokeObjectURL(url);
+
+            // Mostrar mensagem de sucesso
+            showNotification('Arquivo de contato baixado! Abra o arquivo para salvar na agenda.', 'success');
+        }
+
+        // Função para abrir contatos no Android
+        function openAndroidContacts() {
+            const contactData = {
+                name: 'Edmar Silva',
+                company: 'SECURITY MASTER',
+                title: 'Representante Comercial',
+                phone: '12997879508',
+                email: 'comercial@securitymaster.com.br',
+                website: 'www.securitymaster.com.br',
+                address: 'Base de Campos do Jordão'
+            };
+
+            // Tentar abrir o aplicativo de contatos com dados pré-preenchidos
+            try {
+                // Para Android, tentar abrir o aplicativo de contatos
+                const intentUrl = `intent://contacts/people/#Intent;action=android.intent.action.INSERT;S.name=${encodeURIComponent(contactData.name)};S.phone=${contactData.phone};S.email=${contactData.email};S.company=${encodeURIComponent(contactData.company)};S.title=${encodeURIComponent(contactData.title)};end`;
+                
+                // Tentar abrir o intent
+                window.location.href = intentUrl;
+                
+                // Fallback: tentar abrir o aplicativo de contatos padrão
+                setTimeout(() => {
+                    window.location.href = 'content://com.android.contacts/contacts';
+                }, 1000);
+                
+                showNotification('Abrindo aplicativo de contatos...', 'info');
+            } catch (error) {
+                // Se falhar, baixar o arquivo VCF
+                downloadVCF(contactData);
+            }
+        }
+
+                 // Função para mostrar QR Code
+         function showQRCode() {
+             const contactData = {
+                 name: 'Edmar Silva',
+                 company: 'SECURITY MASTER',
+                 title: 'Representante Comercial',
+                 phone: '12997879508',
+                 email: 'comercial@securitymaster.com.br',
+                 website: 'www.securitymaster.com.br',
+                 address: 'Base de Campos do Jordão'
+             };
+
+             // Criar conteúdo do vCard para o QR Code
+             const vcfContent = `BEGIN:VCARD
+VERSION:3.0
+FN:${contactData.name}
+ORG:${contactData.company}
+TITLE:${contactData.title}
+TEL;TYPE=CELL:${contactData.phone}
+EMAIL:${contactData.email}
+URL:${contactData.website}
+ADR;TYPE=WORK:;;${contactData.address};;;;
+NOTE:Representante Comercial da Security Master - Base de Campos do Jordão
+END:VCARD`;
+
+             // Limpar container do QR Code
+             const qrContainer = document.getElementById('qrcode');
+             qrContainer.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i><p>Gerando QR Code...</p></div>';
+
+             // Tentar primeiro a biblioteca local, depois APIs online
+             generateQRCode(qrContainer, vcfContent);
+         }
+
+         // Função para fechar modal do QR Code
+         function closeQRModal() {
+             document.getElementById('qrModal').style.display = 'none';
+         }
+
+         // Função principal para gerar QR Code
+         function generateQRCode(container, text) {
+             // Tentar primeiro a biblioteca local
+             if (typeof QRCode !== 'undefined') {
+                 try {
+                     // Limpar container
+                     container.innerHTML = '';
+                     
+                     // Gerar QR Code usando biblioteca local
+                     QRCode.toCanvas(container, text, {
+                         width: 200,
+                         margin: 2,
+                         color: {
+                             dark: '#000000',
+                             light: '#FFFFFF'
+                         },
+                         errorCorrectionLevel: 'M'
+                     }, function (error) {
+                         if (error) {
+                             console.error('Erro na biblioteca local:', error);
+                             // Se falhar, tentar APIs online
+                             generateQRCodeFallback(container, text);
+                         } else {
+                             // Sucesso! Mostrar modal
+                             document.getElementById('qrModal').style.display = 'block';
+                             
+                             // Fechar modal ao clicar fora
+                             document.getElementById('qrModal').addEventListener('click', function(e) {
+                                 if (e.target === this) {
+                                     closeQRModal();
+                                 }
+                             });
+                             
+                             showNotification('QR Code gerado com sucesso!', 'success');
+                         }
+                     });
+                     return;
+                 } catch (error) {
+                     console.error('Erro ao usar biblioteca local:', error);
+                 }
+             }
+             
+             // Se biblioteca local não estiver disponível ou falhar, usar APIs online
+             generateQRCodeFallback(container, text);
+         }
+
+         // Função para gerar QR Code usando API online
+         function generateQRCodeFallback(container, text) {
+             try {
+                 // Tentar múltiplas APIs de QR Code
+                 const apis = [
+                     `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(text)}&chld=M|0`,
+                     `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`,
+                     `https://qr.tec-it.com/API/QRCode?data=${encodeURIComponent(text)}&size=200`
+                 ];
+                 
+                 let currentApiIndex = 0;
+                 
+                 function tryNextApi() {
+                     if (currentApiIndex >= apis.length) {
+                         // Se todas as APIs falharem, mostrar mensagem de erro
+                         container.innerHTML = '<div class="error-message"><i class="fas fa-exclamation-triangle"></i><p>Erro ao gerar QR Code</p><p>Verifique sua conexão com a internet</p></div>';
+                         document.getElementById('qrModal').style.display = 'block';
+                         showNotification('Erro ao gerar QR Code', 'error');
+                         return;
+                     }
+                     
+                     const qrUrl = apis[currentApiIndex];
+                     const img = document.createElement('img');
+                     img.src = qrUrl;
+                     img.alt = 'QR Code';
+                     img.style.width = '200px';
+                     img.style.height = '200px';
+                     img.style.display = 'block';
+                     img.style.margin = '0 auto';
+                     
+                     // Adicionar evento de carregamento
+                     img.onload = function() {
+                         container.innerHTML = '';
+                         container.appendChild(img);
+                         
+                         // Mostrar modal
+                         document.getElementById('qrModal').style.display = 'block';
+                         
+                         // Fechar modal ao clicar fora
+                         document.getElementById('qrModal').addEventListener('click', function(e) {
+                             if (e.target === this) {
+                                 closeQRModal();
+                             }
+                         });
+                         
+                         showNotification('QR Code gerado com sucesso!', 'success');
+                     };
+                     
+                     // Adicionar evento de erro
+                     img.onerror = function() {
+                         console.error(`Erro ao carregar QR Code da API ${currentApiIndex + 1}`);
+                         currentApiIndex++;
+                         tryNextApi();
+                     };
+                 }
+                 
+                 // Iniciar tentativas
+                 tryNextApi();
+                 
+             } catch (error) {
+                 console.error('Erro ao gerar QR Code:', error);
+                 showNotification('Erro ao gerar QR Code', 'error');
+             }
+         }
+
+         // Função para mostrar notificações
+         function showNotification(message, type = 'info') {
+            // Criar elemento de notificação
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#007bff'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1000;
+                font-family: 'Poppins', sans-serif;
+                font-size: 14px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            
+            // Adicionar ao DOM
+            document.body.appendChild(notification);
+            
+            // Animar entrada
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remover após 3 segundos
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^(.+) index.php?page=$1 
+
+# Para o cabeçalho Apache
+ <IfModule mod_headers.c> 
+    sempre defina Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+ </IfModule>

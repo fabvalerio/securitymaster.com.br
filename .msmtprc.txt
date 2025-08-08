@@ -1,0 +1,15 @@
+defaults
+auth           on
+tls            on
+tls_starttls   on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile        /var/log/msmtp.log
+
+account sendgrid
+host smtp.sendgrid.net
+port 587
+from contato@web4br.com
+user mlsn.3f4e3ada22e98cafdb249d8ad532473cdf73d6b7d31887af31fceb971a8e50f8
+password SUA_CHAVE_DE_API_DO_SENDGRID
+
+account default : sendgrid
